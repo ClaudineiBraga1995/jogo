@@ -1,37 +1,50 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation'; // 1. Importe o useRouter
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
 export default function RegistrePage() {
+  const router = useRouter(); // 2. Inicialize o router
+  
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [confirmarSenha, setConfirmarSenha] = useState('');
   const [dataNascimento, setDataNascimento] = useState('');
+  const [erro, setErro] = useState('');
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
+    setErro('');
 
     if (senha !== confirmarSenha) {
-      alert('As senhas não coincidem!');
+      setErro('As senhas não coincidem!');
       return;
     }
 
-    const res = await fetch('/api/usuarios', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ 
-        nome, 
-        email, 
-        senha,
-        dataNascimento // Envia a data selecionada
-      }),
-    });
+    try {
+      const res = await fetch('/api/usuarios', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          nome, 
+          email, 
+          senha,
+          dataNascimento 
+        }),
+      });
 
-    if (res.ok) {
-      alert('Usuário cadastrado com sucesso!');
+      if (res.ok) {
+        // 3. Redireciona para a tela de login se a resposta for de sucesso (status 201/200)
+        router.push('/login');
+      } else {
+        const data = await res.json();
+        setErro(data.error || 'Erro ao realizar cadastro.');
+      }
+    } catch (err) {
+      setErro('Ocorreu um erro inesperado ao conectar ao servidor.');
     }
   };
 
@@ -39,6 +52,13 @@ export default function RegistrePage() {
     <div className="flex min-h-screen items-center justify-center bg-gray-100">
       <form onSubmit={handleRegister} className="w-full max-w-sm rounded-lg bg-white p-6 shadow-md space-y-4">
         <h1 className="text-2xl font-bold text-center text-gray-800">Criar Conta</h1>
+        
+        {erro && (
+          <div className="rounded bg-red-100 p-2 text-sm text-red-600 border border-red-200">
+            {erro}
+          </div>
+        )}
+
         <Input label="Nome" type="text" value={nome} onChange={(e) => setNome(e.target.value)} required />
         <Input label="E-mail" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
         <Input 
@@ -50,6 +70,7 @@ export default function RegistrePage() {
         />
         <Input label="Senha" type="password" value={senha} onChange={(e) => setSenha(e.target.value)} required />
         <Input label="Confirmar Senha" type="password" value={confirmarSenha} onChange={(e) => setConfirmarSenha(e.target.value)} required />
+        
         <Button type="submit">Cadastrar</Button>
       </form>
     </div>
