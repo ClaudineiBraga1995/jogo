@@ -4,8 +4,6 @@ import { prisma } from '@/lib/prisma';
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    
-    // Desestrutura o que vem do formulário (o input chama-se dataNascimento)
     const { nome, email, senha, dataNascimento } = body;
 
     if (!dataNascimento) {
@@ -15,13 +13,41 @@ export async function POST(request: Request) {
       );
     }
 
+    const dataFormatada = new Date(dataNascimento);
+    const agora = new Date();
+
+    // Data limite de 100 anos atrás
+    const cemAnosAtras = new Date();
+    cemAnosAtras.setFullYear(cemAnosAtras.getFullYear() - 100);
+
+    // Validações de data
+    if (isNaN(dataFormatada.getTime())) {
+      return NextResponse.json(
+        { error: 'Data de nascimento inválida.' },
+        { status: 400 }
+      );
+    }
+
+    if (dataFormatada > agora) {
+      return NextResponse.json(
+        { error: 'Data de nascimento não pode ser no futuro.' },
+        { status: 400 }
+      );
+    }
+
+    if (dataFormatada < cemAnosAtras) {
+      return NextResponse.json(
+        { error: 'Data de nascimento excede o limite permitido (100 anos).' },
+        { status: 400 }
+      );
+    }
+
     const novoUsuario = await prisma.usuario.create({
       data: {
         nome,
         email,
         senha,
-        // Conecta o valor do formulário à propriedade exata do Prisma (dataNasc)
-        dataNasc: new Date(dataNascimento), 
+        dataNasc: dataFormatada,
       },
     });
 
