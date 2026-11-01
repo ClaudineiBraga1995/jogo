@@ -3,13 +3,31 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "postgresql" 
   url      = env("DATABASE_URL")
 }
 
-model User {
+// Exemplo de tabela de Usuário
+model Usuario {
   id        String   @id @default(uuid())
+  nome      String
   email     String   @unique
-  name      String?
-  createdAt DateTime @default(now())
+  senha     String
+  dataNasc  DateTime @db.Date
+  criadoEm  DateTime @default(now())
+
+  @@map("usuario") // Nome exato da tabela no banco de dados
 }
+
+// Exemplo de tabela de Jogo
+model Jogo {
+  id        String   @id @default(uuid())
+  titulo    String
+  descricao String?
+  pontos    Int      @default(0)
+  vidas     Int      @default(0)
+  criadoEm  DateTime @default(now())
+
+  @@map("jogo")
+}
+
