@@ -1,22 +1,21 @@
 import Link from 'next/link';
 import Image from 'next/image';
+import { Button } from '@/components/ui/button';
 
 export default function Home() {
   return (
     <div className="relative flex h-screen w-full flex-col overflow-hidden bg-[#e5e4e4] font-sans">
-      {/* Header Menu (Canto Superior Direito) */}
+
       <header className="absolute top-5 right-7 z-10 flex gap-5">
-        <button
-          id="btn-config"
-          className="rounded-[12px] bg-[#6f8dca] px-6 py-2.5 text-base font-bold text-white shadow-md transition-transform active:scale-95 hover:bg-[#5b7ab7]"
-        >
+
+        <Button id="btn-config" className="px-6 py-2.5 text-base">
           Configuração
-        </button>
-        <Link
-          href="/login"
-          className="rounded-[12px] bg-[#6f8dca] px-6 py-2.5 text-base font-bold text-white shadow-md transition-transform active:scale-95 hover:bg-[#5b7ab7]"
-        >
-          Entrar
+        </Button>
+
+        <Link href="/login">
+          <Button id="btn-entrar" className="px-6 py-2.5 text-base">
+            Entrar
+          </Button>
         </Link>
       </header>
 
@@ -32,13 +31,12 @@ export default function Home() {
             priority
             className="w-[300px] max-w-full object-contain"
           />
-          <Link
-            href="/jogar"
-            className="flex w-[250px] items-center justify-center rounded-[12px] bg-[#6f8dca] py-3.5 text-[22px] font-bold text-white shadow-md transition-transform active:scale-95 hover:bg-[#5b7ab7]"
-          >
+         <Link href="/jogar">
+          <Button id="btn-jogar" className="w-[250px] py-[12px] text-[22px]">
             Jogar
+          </Button>
           </Link>
-        </div>
+                </div>
 
         {/* Coluna Direita: Imagem Ilustrativa dos Pilares */}
         <div className="coluna-dir">
