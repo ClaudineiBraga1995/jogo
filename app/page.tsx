@@ -1,25 +1,57 @@
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-gray-50 p-6">
-      <h1 className="text-4xl font-extrabold text-gray-900 mb-4">Bem-vindo ao Jogo</h1>
-      <p className="text-lg text-gray-600 mb-8">Escolha uma opção para continuar:</p>
-      
-      <div className="flex gap-4">
-        <Link 
-          href="/login" 
-          className="rounded-md bg-blue-600 px-6 py-3 font-semibold text-white transition hover:bg-blue-700"
+    <div className="relative flex h-screen w-full flex-col overflow-hidden bg-[#e5e4e4] font-sans">
+      {/* Header Menu (Canto Superior Direito) */}
+      <header className="absolute top-5 right-7 z-10 flex gap-5">
+        <button
+          id="btn-config"
+          className="rounded-[12px] bg-[#6f8dca] px-6 py-2.5 text-base font-bold text-white shadow-md transition-transform active:scale-95 hover:bg-[#5b7ab7]"
         >
-          Ir para Login
-        </Link>
-        <Link 
-          href="/registre" 
-          className="rounded-md border border-gray-300 bg-white px-6 py-3 font-semibold text-gray-700 transition hover:bg-gray-100"
+          Configuração
+        </button>
+        <Link
+          href="/login"
+          className="rounded-[12px] bg-[#6f8dca] px-6 py-2.5 text-base font-bold text-white shadow-md transition-transform active:scale-95 hover:bg-[#5b7ab7]"
         >
-          Criar Conta
+          Entrar
         </Link>
-      </div>
-    </main>
+      </header>
+
+      {/* Conteúdo Central */}
+      <main className="mt-10 flex flex-1 items-center justify-center gap-[15vw]">
+        {/* Coluna Esquerda: Logo e Botão Jogar */}
+        <div className="flex flex-col items-center gap-[60px]">
+          <Image
+            src="/images/logo.png"
+            alt="Mundo Lógi Logo"
+            width={300}
+            height={180}
+            priority
+            className="w-[300px] max-w-full object-contain"
+          />
+          <Link
+            href="/jogar"
+            className="flex w-[250px] items-center justify-center rounded-[12px] bg-[#6f8dca] py-3.5 text-[22px] font-bold text-white shadow-md transition-transform active:scale-95 hover:bg-[#5b7ab7]"
+          >
+            Jogar
+          </Link>
+        </div>
+
+        {/* Coluna Direita: Imagem Ilustrativa dos Pilares */}
+        <div className="coluna-dir">
+          <Image
+            src="/images/img_ilustrativa.png"
+            alt="Pilares do Pensamento Computacional"
+            width={450}
+            height={400}
+            priority
+            className="w-[450px] max-w-full object-contain"
+          />
+        </div>
+      </main>
+    </div>
   );
 }
