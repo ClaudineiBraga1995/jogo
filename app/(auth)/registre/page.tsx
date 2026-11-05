@@ -1,27 +1,30 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Alert } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
 
 export default function RegistrePage() {
   const router = useRouter();
-  
+
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [confirmarSenha, setConfirmarSenha] = useState('');
   const [dataNascimento, setDataNascimento] = useState('');
-  
-  // Estados para as datas limites (para evitar instabilidade na pré-renderização)
+
+  // Controla o tipo do input de data (muda para 'date' ao focar para exibir o calendário)
+  const [inputType, setInputType] = useState<'text' | 'date'>('text');
+
+  // Limites de data para evitar instabilidade na pré-renderização
   const [hoje, setHoje] = useState<string>('');
   const [minData, setMinData] = useState<string>('');
 
   const [alerta, setAlerta] = useState<{ texto: string; tipo: 'sucesso' | 'erro' } | null>(null);
 
-  // Define os limites de data apenas quando o componente monta no navegador
   useEffect(() => {
     const dataAtual = new Date();
     setHoje(dataAtual.toISOString().split('T')[0]);
@@ -83,28 +86,107 @@ export default function RegistrePage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-100 p-4">
-      <form onSubmit={handleRegister} className="w-full max-w-sm rounded-lg bg-white p-6 shadow-md space-y-4">
-        <h1 className="text-2xl font-bold text-center text-gray-800">Criar Conta</h1>
-        
-        {alerta && <Alert tipo={alerta.tipo} mensagem={alerta.texto} />}
+    <div className="flex min-h-screen w-full items-center justify-center bg-[#e5e4e4] font-sans p-4">
+      <main className="flex items-center justify-center gap-[12vw]">
+        {/* Lado Esquerdo: Logo do Mundo Lógi */}
+        <div className="logo-container">
+          <Link href="/">
+            <Image
+              src="/images/logo.png"
+              alt="Mundo Lógi Logo"
+              width={320}
+              height={190}
+              priority
+              className="w-[320px] max-w-full object-contain"
+            />
+          </Link>
+        </div>
 
-        <Input label="Nome" type="text" value={nome} onChange={(e) => setNome(e.target.value)} required />
-        <Input label="E-mail" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-        <Input 
-          label="Data de Nascimento" 
-          type="date" 
-          min={minData} // Atualizado com estado seguro
-          max={hoje}    // Atualizado com estado seguro
-          value={dataNascimento} 
-          onChange={(e) => setDataNascimento(e.target.value)} 
-          required 
-        />
-        <Input label="Senha" type="password" value={senha} onChange={(e) => setSenha(e.target.value)} required />
-        <Input label="Confirmar Senha" type="password" value={confirmarSenha} onChange={(e) => setConfirmarSenha(e.target.value)} required />
-        
-        <Button type="submit">Cadastrar</Button>
-      </form>
+        {/* Lado Direito: Formulário e Ações */}
+        <div className="flex w-[380px] flex-col items-center gap-[18px]">
+          {/* Card Azul Claro */}
+          <div className="flex w-full flex-col items-center rounded-[24px] bg-[#9eb9cc] p-[35px] shadow-sm">
+            <h2 className="mb-[20px] text-[32px] font-bold text-black">Criar Conta</h2>
+
+            {/* Componente de Alerta de Erro/Sucesso */}
+            {alerta && (
+              <div className="mb-4 w-full">
+                <Alert tipo={alerta.tipo} mensagem={alerta.texto} />
+              </div>
+            )}
+
+            <form id="form-cadastro" onSubmit={handleRegister} className="flex w-full flex-col gap-[14px]">
+              <input
+                type="text"
+                placeholder="Nome"
+                value={nome}
+                onChange={(e) => setNome(e.target.value)}
+                required
+                className="w-full rounded-[14px] bg-[#c8d1d9] px-[20px] py-[12px] text-[16px] text-black outline-none placeholder:text-[#555]"
+              />
+
+              <input
+                type={inputType}
+                placeholder="Data de Nascimento"
+                value={dataNascimento}
+                min={minData}
+                max={hoje}
+                onFocus={() => setInputType('date')}
+                onBlur={() => {
+                  if (!dataNascimento) setInputType('text');
+                }}
+                onChange={(e) => setDataNascimento(e.target.value)}
+                required
+                className="w-full rounded-[14px] bg-[#c8d1d9] px-[20px] py-[12px] text-[16px] text-black outline-none placeholder:text-[#555]"
+              />
+
+              <input
+                type="email"
+                placeholder="E-mail"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className="w-full rounded-[14px] bg-[#c8d1d9] px-[20px] py-[12px] text-[16px] text-black outline-none placeholder:text-[#555]"
+              />
+
+              <input
+                type="password"
+                placeholder="Senha"
+                value={senha}
+                onChange={(e) => setSenha(e.target.value)}
+                required
+                className="w-full rounded-[14px] bg-[#c8d1d9] px-[20px] py-[12px] text-[16px] text-black outline-none placeholder:text-[#555]"
+              />
+
+              <input
+                type="password"
+                placeholder="Confirmar Senha"
+                value={confirmarSenha}
+                onChange={(e) => setConfirmarSenha(e.target.value)}
+                required
+                className="w-full rounded-[14px] bg-[#c8d1d9] px-[20px] py-[12px] text-[16px] text-black outline-none placeholder:text-[#555]"
+              />
+            </form>
+          </div>
+
+          {/* Botão "Cadastrar" usando o componente <Button> com largura compacta */}
+          <Button
+            type="submit"
+            form="form-cadastro"
+            className="w-[160px] py-[8px] text-[16px]"
+          >
+            Cadastrar
+          </Button>
+
+          {/* Link para voltar ao Login */}
+          <Link
+            href="/login"
+            className="text-[15px] font-semibold text-[#1d4ed8] underline hover:text-[#1e40af] transition-colors"
+          >
+            Já tem conta? Entrar
+          </Link>
+        </div>
+      </main>
     </div>
   );
 }
